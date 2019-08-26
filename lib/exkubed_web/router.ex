@@ -11,5 +11,6 @@ defmodule ExkubedWeb.Router do
     pipe_through :api
 
     get("/peel", Orange, :peel)
+    get("/", Orange, :bag)
   end
 end

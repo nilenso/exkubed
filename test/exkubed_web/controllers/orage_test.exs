@@ -8,4 +8,10 @@ defmodule ExkubedWeb.Controllers.OrangeTest do
     assert 200 == resp |> Map.get(:status)
     assert String.contains?(resp |> Map.get(:resp_body), "Peeling an orange for you!")
   end
+
+  test "Should get a bag of oranges", %{conn: conn} do
+    resp = Orange.bag(conn, %{})
+    assert 200 == resp |> Map.get(:status)
+    assert String.contains?(resp |> Map.get(:resp_body), "Bag of orange")
+  end
 end
