@@ -8,8 +8,8 @@ use Mix.Config
 # with webpack to recompile .js and .css sources.
 config :exkubed, ExkubedWeb.Endpoint,
   http: [port: 4000],
+  server: true,
   debug_errors: true,
-  code_reloader: true,
   check_origin: false,
   watchers: []
 
