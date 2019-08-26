@@ -6,12 +6,29 @@ defmodule Exkubed.Application do
   use Application
 
   def start(_type, _args) do
+    # LibCluster Topologies
+    topologies = [
+      example: [
+        strategy: Cluster.Strategy.Kubernetes,
+        config: [
+          mode: :ip,
+          kubernetes_node_basename: "exkubed",
+          kubernetes_selector: "app=x-cubed",
+          kubernetes_namespace: "default",
+          polling_interval: 10_000
+        ]
+      ]
+    ]
+
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      ExkubedWeb.Endpoint
+      ExkubedWeb.Endpoint,
       # Starts a worker by calling: Exkubed.Worker.start_link(arg)
       # {Exkubed.Worker, arg},
+
+      # Cluster supervisor for Libcluster
+      {Cluster.Supervisor, [topologies, [name: Exkubed.ClusterSupervisor]]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
