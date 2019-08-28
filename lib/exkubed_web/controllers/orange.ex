@@ -6,6 +6,6 @@ defmodule ExkubedWeb.Controllers.Orange do
   end
 
   def bag(conn, _params) do
-    json(conn, %{message: "Bag of orange: #{inspect(Node.list())}"})
+    json(conn, %{message: "Bag of orange: #{inspect(Node.list())} #{inspect Node.self()} #{inspect Node.get_cookie()}"})
   end
 end
