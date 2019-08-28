@@ -13,7 +13,7 @@ defmodule Exkubed.Application do
         config: [
           mode: :ip,
           kubernetes_node_basename: "exkubed",
-          kubernetes_selector: "app=x-cubed",
+          kubernetes_selector: "app=exkubed",
           kubernetes_namespace: "default",
           polling_interval: 10_000
         ]

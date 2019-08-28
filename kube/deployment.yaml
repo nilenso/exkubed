@@ -1,0 +1,78 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: exkubed
+  name: exkubed
+  namespace: default
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: exkubed
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: exkubed
+    spec:
+      serviceAccountName: exkubed-service-account
+      containers:
+      - image: exkubed:latest
+        imagePullPolicy: IfNotPresent
+        name: exkubed
+        env:
+          # Required for accepting env vars
+          - name: REPLACE_OS_VARS
+            value: 'true'
+          # Erlang node cookie
+          - name: RELEASE_COOKIE
+            value: "such secure cookie"
+          # Namespace in which the deployment is in
+          # It's used when we require pod's internal A record
+          # Used in mode :dns and :hostname of libcluster
+          # https://github.com/bitwalker/libcluster/blob/4c57d3c57f820683c113483053724c54d0ef12fd/lib/strategy/kubernetes.ex#L24
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          # The internal IP of the Pod
+          # Used in mode :ip of libcluster
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          # Specifies whether the elixir node is configured with name or sname
+          - name: RELEASE_DISTRIBUTION
+            value: name
+          # The name of the pod
+          # The basename here should match the :kubernetes_node_basename key in libcluster config
+          - name: RELEASE_NODE
+            value: exkubed@$(POD_IP)
+        ports:
+          - containerPort: 4000
+      restartPolicy: Always
+      schedulerName: default-scheduler
+
+---
+# Loadbalancer Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: exkubed
+  namespace: default
+  labels:
+    app: exkubed
+spec:
+  type: LoadBalancer
+  selector:
+    app: exkubed
+  ports:
+    - name: http
+      port: 80
+      targetPort: 4000

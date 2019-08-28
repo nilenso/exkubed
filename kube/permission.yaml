@@ -1,0 +1,33 @@
+# Service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  # This name should match the serviceAccountName in deployment.yaml
+  name: exkubed-service-account
+---
+# Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - list
+      - get
+metadata:
+  name: exkubed-role
+---
+# Role binding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: exkubed-roll
+metadata:
+  name: exkubed-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: exkubed-service-account
