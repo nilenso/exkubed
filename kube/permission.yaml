@@ -25,7 +25,7 @@ kind: RoleBinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: exkubed-roll
+  name: exkubed-role
 metadata:
   name: exkubed-rolebinding
 subjects:
